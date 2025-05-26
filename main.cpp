@@ -64,7 +64,7 @@ void createStudents(student students[], int &ch) {
         cout << endl;
 
         if (ch == 1) {
-            cout << "\nЗаполните список заполнением? [1-Yes, 2-No]\n";
+            cout << "\nВвести еще студент? [1-Да, 2-Нет]\n";
             int choice;
             cin >> choice;
             if (choice == 1) {
@@ -88,6 +88,7 @@ void createStudents(student students[], int &ch) {
 void addTextfile(student students[]) {
 	ifstream file("adddata.txt");
 	string datafile;
+
 	while(getline(file, datafile)) {
 		istringstream iss(datafile);
 
@@ -99,15 +100,21 @@ void addTextfile(student students[]) {
 		testGrades1, testGrades2, testGrades3, testGrades4, testGrades5;
 
 
-		if(iss >> fullName >> gender >> group >> id >> examGrades1 >> examGrades2 >> examGrades3 >>  testGrades1 >>
-		testGrades2 >> testGrades3 >> testGrades4 >> testGrades5) {
+		if(iss >> fullName >> gender >> group >> id >> examGrades1 >> examGrades2 >> examGrades3 >>
+		testGrades1 >>testGrades2 >> testGrades3 >> testGrades4 >> testGrades5) {
 			students[room].fullName = fullName;
 			students[room].gender = gender;
 			students[room].group = group;
 			students[room].id = id;
-			students[room].studGrades.exam[0]
-			students[room].studGrades.exam[1]
-			students[room].studGrades.exam[2]
+			students[room].studGrades.exam[0] = examGrades1;
+			students[room].studGrades.exam[1] = examGrades2;
+			students[room].studGrades.exam[2] = examGrades3;
+			students[room].studGrades.test[0] = testGrades1;
+			students[room].studGrades.test[1] = testGrades2;
+			students[room].studGrades.test[2] = testGrades3;
+			students[room].studGrades.test[3] = testGrades4;
+			students[room].studGrades.test[4] = testGrades5;
+			room++;
 		}
 		else {
 			cerr << "Ошибка формата в строке: " << datafile << endl;
@@ -121,7 +128,7 @@ void data(student students[], int number) {
 	for (int i = number; i < room; i++) {
 		cout << "\tСтуден " << i + 1 << endl;
 		cout << "Полное имя: " << students[i].fullName << endl;
-		cout << "Пол: " << students[i].gender << endl;
+		cout << "Пол(мужской, женский): " << students[i].gender << endl;
 		cout << "Номер группы: " << students[i].group << endl;
 		cout << "Номер в списках группы: " << students[i].id << endl;
 		cout << "Оценки за экзамен: ";
@@ -219,7 +226,7 @@ void topStudents(student students[]) {
 		for (short i = 0; i < topStud; i++)
 		{
 			int buf = serialNum[i];
-			cout << "Студен " << serialNum[i] + 1 << " Имя: " << students[buf].fullName << endl;
+			cout << "Студен\n" << serialNum[i] + 1 << " Имя: " << students[buf].fullName << endl;
 			cout << "Средний балл " << sred[i] << endl;
 			cout << "Оценки ";
 			for (short j = 0; j < 3; j++) {
@@ -250,8 +257,8 @@ void numManAndWoman(student students[]) {
 			numWomen++;
 		}
 	}
-	cout << "Номер мужчины: " << numMen << endl;
-	cout << "Номер женщины: " << numWomen << endl;
+	cout << "Кол-во мужчины: " << numMen << endl;
+	cout << "Кол-во женщины: " << numWomen << endl;
 }
 
 void grants(student students[]) {
@@ -397,6 +404,7 @@ void textFile(student students[]) {
 			}
 			file << "\t";
 		}
+		file << endl;
 		file.close();
 	}
 	else {
