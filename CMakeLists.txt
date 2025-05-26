@@ -4,4 +4,4 @@ project(CursWork2)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(CursWork2 main.cpp
-        varry14.cpp)
+)

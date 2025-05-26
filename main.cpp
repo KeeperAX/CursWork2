@@ -1,11 +1,12 @@
 
-// 1) Вывести на экран список студентов группы, которая содержит максимальное (в пределах потока) кол-во хорошистов и отличников
+// 1) Вывести на экран список студентов группы, которая содержит максимальное (в пределах потока) кол-во хорошистов и отличников *
 // 2) Вывести на экран в порядке возрастания номера групп, в которых процент троечников и двоечников превышает заданное с клавиатуры значение
-// 3) Вывести перечень всех фамилий студентов потока, группированный по размеру сепендии
+// 3) Вывести перечень всех фамилий студентов потока, группированный по размеру стипендии
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <sstream>
 
 int room = 0;
 const int maxStudents = 30; //Кол-во студентов, что можно ввести.
@@ -84,6 +85,38 @@ void createStudents(student students[], int &ch) {
     }
 }
 
+void addTextfile(student students[]) {
+	ifstream file("adddata.txt");
+	string datafile;
+	while(getline(file, datafile)) {
+		istringstream iss(datafile);
+
+		string fullName;
+		string gender;
+		short group;
+		short id;
+		short  examGrades1, examGrades2, examGrades3,
+		testGrades1, testGrades2, testGrades3, testGrades4, testGrades5;
+
+
+		if(iss >> fullName >> gender >> group >> id >> examGrades1 >> examGrades2 >> examGrades3 >>  testGrades1 >>
+		testGrades2 >> testGrades3 >> testGrades4 >> testGrades5) {
+			students[room].fullName = fullName;
+			students[room].gender = gender;
+			students[room].group = group;
+			students[room].id = id;
+			students[room].studGrades.exam[0]
+			students[room].studGrades.exam[1]
+			students[room].studGrades.exam[2]
+		}
+		else {
+			cerr << "Ошибка формата в строке: " << datafile << endl;
+			system("pause"); return;
+		}
+	}
+	file.close();
+}
+
 void data(student students[], int number) {
 	for (int i = number; i < room; i++) {
 		cout << "\tСтуден " << i + 1 << endl;
@@ -150,8 +183,8 @@ void sortGroup(student students[]) {
 }
 
 void topStudents(student students[]) {
-	cout << "Сколько из лучших учеников следует извлечь" << endl;
-	int topStud; //Кол-во лучших студентов, что выведит программа
+	cout << "Сколько студентов вывести?" << endl;
+	int topStud; //Кол-во лучших студентов, что выведет программа
 	cin >> topStud;
 	if (topStud >= 0 && topStud <= room)
 	{
@@ -208,11 +241,11 @@ void numManAndWoman(student students[]) {
 	short numMen = 0, numWomen = 0;
 	for (short i = 0; i < room; i++)
 	{
-		if (students[i].gender == "man" || students[i].gender == "Man")
+		if (students[i].gender == "Мужской" || students[i].gender == "мужской")
 		{
 			numMen++;
 		}
-		if (students[i].gender == "woman" || students[i].gender == "Woman")
+		if (students[i].gender == "Женский" || students[i].gender == "женский")
 		{
 			numWomen++;
 		}
@@ -330,7 +363,7 @@ void numInList(student students[]) {
 void textFile(student students[]) {
 	ofstream file("data.txt");
 	if (file.is_open()) {
-		file << "\nStudents:\t";
+		file << "\tCтуденты:\n";
 		for (short i = 0; i < room; i++) {
 			file << "Студент: " << i + 1 << "\t";
 		}
@@ -357,7 +390,7 @@ void textFile(student students[]) {
 			}
 			file << "\t\t";
 		}
-		file << "\nTest scores:\t";
+		file << "\nОценки за тест:\t";
 		for (short i = 0; i < room; i++) {
 			for (short j = 0; j < 5; j++) {
 				file << students[i].studGrades.test[j] << " ";
@@ -371,30 +404,30 @@ void textFile(student students[]) {
 	}
 }
 
-void dormitory(student students[]) {
-	cout << "\tВведите дополнительную информацию о студенте" << endl;
-	cout << "Студент - иностранный студент? [Yes/No]" << endl;
-	cout << "Family income." << endl;
-	for (short i = 0; i < room; i++) {
-		cout << "Студент " << i + 1 << endl;
-		cin >> students[i].addInfo.nonresident;
-		cin >> students[i].addInfo.finance;
-	}
-	short income = 10000; //Мин. доход
-	for (short i = 0; i < room; i++)
-	{
-		if ((students[i].addInfo.nonresident == "Yes" || students[i].addInfo.nonresident == "yes") && students[i].addInfo.finance <= income)
-		{
-			int buf = room;
-			room = i + 1;
-			students[i].addInfo.nonresident;
-			students[i].addInfo.finance;
-			cout << endl;
-			data(students, i);
-			room = buf;
-		}
-	}
-}
+// void dormitory(student students[]) {
+// 	cout << "\tВведите дополнительную информацию о студенте" << endl;
+// 	cout << "Студент - иностранный студент? [Да/Нет]" << endl;
+// 	cout << "Семейный доход." << endl;
+// 	for (short i = 0; i < room; i++) {
+// 		cout << "Студент " << i + 1 << endl;
+// 		cin >> students[i].addInfo.nonresident;
+// 		cin >> students[i].addInfo.finance;
+// 	}
+// 	short income = 10000; //Мин. доход
+// 	for (short i = 0; i < room; i++)
+// 	{
+// 		if ((students[i].addInfo.nonresident == "Да" || students[i].addInfo.nonresident == "да") && students[i].addInfo.finance <= income)
+// 		{
+// 			int buf = room;
+// 			room = i + 1;
+// 			students[i].addInfo.nonresident;
+// 			students[i].addInfo.finance;
+// 			cout << endl;
+// 			data(students, i);
+// 			room = buf;
+// 		}
+// 	}
+// }
 
 int main() {
 	struct student students[maxStudents];
@@ -402,16 +435,17 @@ int main() {
 	system("chcp 65001");
 	while (true)
 	{
-		cout << "\n[1]Создайте новую запись студента." << endl;
-		cout << "[2]Внесение изменений в существующую запись." << endl;
+		cout << "\n[1]Ввод студента." << endl;
+		cout << "[2]Внесение изменений в список." << endl;
 		cout << "[3]Отображает все данные студента." << endl;
 		cout << "[4]Показать информацию обо всех студентах в группе N." << endl;
 		cout << "[5]Отображение самых успешных студентов со средним показателем с самым высоким рейтингом за последнюю сессию." << endl;
 		cout << "[6]Отображая количество учеников мужского и женского пола." << endl;
-		cout << "[7]Отображение данных о студентах, которые не получают стипендию;" << endl;
+		cout << "[7]Отображение данных о студентах - хорошистов и отличников;" << endl;
 		cout << "[8]Отображение данных о студентах, у которых есть номер в списке. - k" << endl;
-		cout << "[9]Вывод данных в текстовый файл" << endl;
-		cout << "[10]IDZ#1" << endl;
+		cout << "[9]Ввод студента из файла" << endl;
+		cout << "[10]Вывод данных в текстовый файл" << endl;
+		// cout << "[10]IDZ#1" << endl;
 		int choice;
 		cin >> choice;
 		switch (choice)
@@ -441,8 +475,10 @@ int main() {
 		case 6: system("cls"); numManAndWoman(students); break;
 		case 7: system("cls"); grants(students); break;
 		case 8: system("cls"); numInList(students); break;
-		case 9: system("cls"); textFile(students); break;
-		case 10: system("cls"); dormitory(students); break;
+		case 9: system("cls"); addTextfile(students); break;
+		case 10: system("cls"); textFile(students); break;
+
+		//case 10: system("cls"); dormitory(students); break;
 		default: system("cls"); cout << "error" << endl; break;
 		}
 	}
