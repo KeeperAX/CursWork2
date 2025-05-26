@@ -7,7 +7,7 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
-
+#include <windows.h>
 int room = 0;
 const int maxStudents = 30; //Кол-во студентов, что можно ввести.
 
@@ -441,6 +441,8 @@ int main() {
 	struct student students[maxStudents];
 	setlocale(LC_ALL, "RU");
 	system("chcp 65001");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	while (true)
 	{
 		cout << "\n[1]Ввод студента." << endl;
@@ -491,3 +493,7 @@ int main() {
 		}
 	}
 }
+
+
+
+
