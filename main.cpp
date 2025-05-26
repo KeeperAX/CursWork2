@@ -88,44 +88,94 @@ void createStudents(student students[], int &ch) {
     }
 }
 
-void addTextfile(student students[]) {
-	ifstream file("adddata.txt");
-	string datafile;
-
-	while(getline(file, datafile)) {
-		istringstream iss(datafile);
-
-		string fullName;
-		string gender;
-		short group;
-		short id;
-		short  examGrades1, examGrades2, examGrades3,
-		testGrades1, testGrades2, testGrades3, testGrades4, testGrades5;
-		short spended;
-
-		if(iss >> fullName >> gender >> group >> id >> examGrades1 >> examGrades2 >> examGrades3 >>
-		testGrades1 >>testGrades2 >> testGrades3 >> testGrades4 >> testGrades5) {
-			students[room].fullName = fullName;
-			students[room].gender = gender;
-			students[room].group = group;
-			students[room].id = id;
-			students[room].studGrades.exam[0] = examGrades1;
-			students[room].studGrades.exam[1] = examGrades2;
-			students[room].studGrades.exam[2] = examGrades3;
-			students[room].studGrades.test[0] = testGrades1;
-			students[room].studGrades.test[1] = testGrades2;
-			students[room].studGrades.test[2] = testGrades3;
-			students[room].studGrades.test[3] = testGrades4;
-			students[room].studGrades.test[4] = testGrades5;
-			room++;
-		}
-		else {
-			cerr << "Ошибка формата в строке: " << datafile << endl;
-			system("pause"); return;
-		}
-	}
-	file.close();
+int parseGroup(const string& input) {
+    string numStr;
+    for (char c : input) {
+        if (isdigit(c)) {
+            numStr += c;
+        }
+    }
+    if (numStr.empty()) return 0; // или выбросить исключение
+    return stoi(numStr);
 }
+
+void addTextfile(student students[]) {
+    ifstream file("adddata.txt");
+    if (!file.is_open()) {
+        cerr << "Ошибка открытия файла!" << endl;
+        return;
+    }
+
+    string lines[7]; // Увеличили размер до 7 строк на студента
+    int lineCounter = 0;
+
+    while (getline(file, lines[lineCounter % 7])) { // Изменили на 7
+        lineCounter++;
+
+        if (lineCounter % 7 == 0) { // Проверяем каждые 7 строк
+            if (room >= maxStudents) {
+                cerr << "Достигнут лимит студентов!" << endl;
+                break;
+            }
+
+            student& s = students[room];
+
+            // Заполнение данных
+            s.fullName = lines[0];
+            s.gender = lines[1];
+
+            try {
+                s.group = parseGroup(lines[2]);
+            } catch (...) {
+                cerr << "Ошибка формата группы: " << lines[2] << endl;
+                continue;
+            }
+
+            try {
+                s.id = stoi(lines[3]);
+            } catch (...) {
+                cerr << "Ошибка ID в строке: " << lines[3] << endl;
+                continue;
+            }
+
+            // Оценки за экзамены
+            istringstream iss_exam(lines[4]);
+            for (int i = 0; i < 3; i++) {
+                if (!(iss_exam >> s.studGrades.exam[i])) {
+                    cerr << "Ошибка оценок экзамена" << endl;
+                    break;
+                }
+            }
+
+            // Оценки за тесты
+            istringstream iss_test(lines[5]);
+            for (int i = 0; i < 5; i++) {
+                if (!(iss_test >> s.studGrades.test[i])) {
+                    cerr << "Ошибка оценок теста" << endl;
+                    break;
+                }
+            }
+
+            // Добавляем стипендию
+            try {
+                s.spended = stoi(lines[6]);
+            } catch (...) {
+                cerr << "Ошибка стипендии в строке: " << lines[6] << endl;
+                continue;
+            }
+
+            room++;
+        }
+    }
+
+    if (lineCounter % 7 != 0) {
+        cerr << "Файл содержит неполные данные!" << endl;
+    }
+
+    file.close();
+}
+
+
 
 void data(student students[], int number) {
 	for (int i = number; i < room; i++) {
@@ -449,8 +499,8 @@ int main() {
 	struct student students[maxStudents];
 	setlocale(LC_ALL, "RU");
 	system("chcp 65001");
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+	// SetConsoleCP(1251);
+	// SetConsoleOutputCP(1251);
 	while (true)
 	{
 		cout << "\n[1]Ввод студента." << endl;
