@@ -33,6 +33,7 @@ struct student
 	int id;
 	grades studGrades;
 	addInfoStudents addInfo;
+	int spended;
 };
 
 void createStudents(student students[], int &ch) {
@@ -61,6 +62,8 @@ void createStudents(student students[], int &ch) {
 		for (short i = 0; i < 5; i++) {
 			cin >> students[room].studGrades.test[i];
 		}
+    	cout << "Размер степендии: ";
+    	cin >> students[room].spended;
         cout << endl;
 
         if (ch == 1) {
@@ -98,7 +101,7 @@ void addTextfile(student students[]) {
 		short id;
 		short  examGrades1, examGrades2, examGrades3,
 		testGrades1, testGrades2, testGrades3, testGrades4, testGrades5;
-
+		short spended;
 
 		if(iss >> fullName >> gender >> group >> id >> examGrades1 >> examGrades2 >> examGrades3 >>
 		testGrades1 >>testGrades2 >> testGrades3 >> testGrades4 >> testGrades5) {
@@ -140,6 +143,7 @@ void data(student students[], int number) {
 			cout << students[i].studGrades.test[j] << " ";
 		}
 		cout << endl;
+		cout << "Степендия: " << students[i].spended << endl;
 	}
 	cout << endl;
 }
@@ -403,6 +407,10 @@ void textFile(student students[]) {
 				file << students[i].studGrades.test[j] << " ";
 			}
 			file << "\t";
+		}
+		file <<"\nСтепендия:\t";
+		for (short i = 0; i < room; i++) {
+			file <<students[i].spended <<"\t\t";
 		}
 		file << endl;
 		file.close();

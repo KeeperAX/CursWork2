@@ -1,0 +1,26 @@
+#include <iostream>
+#include "varry14.cpp"
+
+using namespace std;
+
+int main() {
+    system("chcp 65001");
+    setlocale(LC_ALL, "RU");
+    bool cycle = true;
+    do {
+        short choice;
+        cout << "[1] Вариант 14\n"
+             << "[2] Вариант N\n"
+             << "[3] Вариант N\n"
+             << "[0] Закончить программу\n";
+        cin >> choice;
+        switch (choice) {
+            case 1: main14(); break;
+            case 2:  break;
+            case 3:  break;
+            case 0: cycle = false; break;
+            default: cout << "eror"; cycle = false; break;
+        }
+    } while (cycle);
+    return 0;
+}
