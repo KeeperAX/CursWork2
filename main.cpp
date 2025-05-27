@@ -315,32 +315,6 @@ void numManAndWoman(student students[]) {
 }
 
 void grants(student students[]) {
-	cout << "Студенты не получают стипендию.\n" << endl;
-	for (short i = 0; i < room; i++)
-	{
-		short badMarks = 0;
-		for (short j = 0; j < 3; j++)
-		{
-			if (students[i].studGrades.exam[j] <= 3)
-			{
-				badMarks++;
-			}
-		}
-		for (short j = 0; j < 5; j++)
-		{
-			if (students[i].studGrades.test[j] <= 3)
-			{
-				badMarks++;
-			}
-		}
-		if (badMarks == 8)
-		{
-			int buf = room;
-			room = i + 1;
-			data(students, i);
-			room = buf;
-		}
-	}
 	cout << "Студенты, которые получили только «хорошо» и «отлично»." << endl;
 	for (short i = 0; i < room; i++)
 	{
@@ -404,7 +378,6 @@ void grants(student students[]) {
 	}
 
 }
-
 
 void textFile(student students[]) {
 	ofstream file("data.txt");
@@ -494,138 +467,104 @@ void stependiaStudent(student students[]) {
 }
 
 
+
 void printStudentsInGroup(student students[], int group) {
 	cout << "\nСтуденты группы " << group << ":\n";
 	for (int i = 0; i < room; i++) {
 		if (students[i].group == group) {
-			cout << students[i].fullName << " (ID: " << students[i].id << ")";
-			cout << "\nОценки за экзамены: ";
-			for (int j = 0; j < 3; j++) {
-				cout << students[i].studGrades.exam[j] << " ";
-			}
+			cout << students[i].fullName << " (ID: " << students[i].id << ")\n";
+			cout << "Оценки за экзамены: ";
+			for (int j = 0; j < 3; j++) cout << students[i].studGrades.exam[j] << " ";
 			cout << "\nОценки за тесты: ";
-			for (int j = 0; j < 5; j++) {
-				cout << students[i].studGrades.test[j] << " ";
-			}
+			for (int j = 0; j < 5; j++) cout << students[i].studGrades.test[j] << " ";
 			cout << "\nСтипендия: " << students[i].spended << "\n\n";
 		}
 	}
 }
 
-void dvoechniki(student students[], float threshold) {
-	int failCount[maxStudents] = { 0 };
-	int totalCount[maxStudents] = { 0 };
-	bool groupHasFail[maxStudents] = { false };
+void findGroupsWithThreshold(student students[], bool findThrees, float threshold) {
+	// Максимальный возможный номер группы
+	const int MAX_GROUP = 10000; // Можно увеличить при необходимости
+	int totalCount[MAX_GROUP] = { 0 };
+	int lowGradeCount[MAX_GROUP] = { 0 };
+	bool groupExists[MAX_GROUP] = { false };
 
-	// Считаем количество двоечников по группам (оценки 2)
+	// Собираем статистику по группам
 	for (int i = 0; i < room; i++) {
-		totalCount[students[i].group]++;
-		bool isFail = false;
+		int group = students[i].group;
+		if (group >= MAX_GROUP) continue; // На всякий случай
 
-		// Проверяем экзамены (3 оценки)
+		groupExists[group] = true;
+		totalCount[group]++;
+
+		// Проверяем, есть ли низкие оценки
+		bool hasLowGrade = false;
+
+		// Проверяем экзамены
 		for (int j = 0; j < 3; j++) {
-			if (students[i].studGrades.exam[j] == 2) {
-				isFail = true;
+			if ((findThrees && students[i].studGrades.exam[j] == 3) ||
+				(!findThrees && students[i].studGrades.exam[j] == 2)) {
+				hasLowGrade = true;
 				break;
 			}
 		}
 
-		// Проверяем тесты (5 оценок)
-		if (!isFail) {
+		// Если еще не нашли, проверяем тесты
+		if (!hasLowGrade) {
 			for (int j = 0; j < 5; j++) {
-				if (students[i].studGrades.test[j] == 2) {
-					isFail = true;
+				if ((findThrees && students[i].studGrades.test[j] == 3) ||
+					(!findThrees && students[i].studGrades.test[j] == 2)) {
+					hasLowGrade = true;
 					break;
 				}
 			}
 		}
 
-		if (isFail) {
-			failCount[students[i].group]++;
-			groupHasFail[students[i].group] = true;
+		if (hasLowGrade) {
+			lowGradeCount[group]++;
 		}
 	}
 
-	cout << "Группы с процентом двоечников выше " << threshold << "%:\n";
-	bool found = false;
-	for (int i = 0; i < maxStudents; i++) {
-		if (groupHasFail[i] && totalCount[i] > 0) {
-			float failPercentage = (static_cast<float>(failCount[i]) / totalCount[i]) * 100;
-			if (failPercentage > threshold) {
-				cout << "Группа " << i << ": " << failPercentage << "% двоечников\n";
-				printStudentsInGroup(students, i);
-				found = true;
+	// Выводим результаты
+	cout << "Группы с процентом " << (findThrees ? "троечников" : "двоечников")
+		<< " выше " << threshold << "%:\n";
+	bool foundAny = false;
+
+	for (int group = 0; group < MAX_GROUP; group++) {
+		if (groupExists[group] && totalCount[group] > 0) {
+			float percentage = (static_cast<float>(lowGradeCount[group]) / totalCount[group]) * 100;
+			if (percentage > threshold) {
+				cout << "Группа " << group << ": " << percentage << "% "
+					<< (findThrees ? "троечников" : "двоечников") << "\n";
+				printStudentsInGroup(students, group);
+				foundAny = true;
 			}
 		}
 	}
-	if (!found) cout << "Таких групп нет\n";
+
+	if (!foundAny) {
+		cout << "Групп с процентом " << (findThrees ? "троечников" : "двоечников")
+			<< " выше " << threshold << "% не найдено.\n";
+	}
 }
 
-void troichinki(student students[], float threshold) {
-	int threeCount[maxStudents] = { 0 };
-	int totalCount[maxStudents] = { 0 };
-	bool groupHasThree[maxStudents] = { false };
-
-	// Считаем количество троечников по группам (оценки 3)
-	for (int i = 0; i < room; i++) {
-		totalCount[students[i].group]++;
-		bool isThree = false;
-
-		// Проверяем экзамены (3 оценки)
-		for (int j = 0; j < 3; j++) {
-			if (students[i].studGrades.exam[j] == 3) {
-				isThree = true;
-				break;
-			}
-		}
-
-		// Проверяем тесты (5 оценок)
-		if (!isThree) {
-			for (int j = 0; j < 5; j++) {
-				if (students[i].studGrades.test[j] == 3) {
-					isThree = true;
-					break;
-				}
-			}
-		}
-
-		if (isThree) {
-			threeCount[students[i].group]++;
-			groupHasThree[students[i].group] = true;
-		}
-	}
-
-	cout << "Группы с процентом троечников выше " << threshold << "%:\n";
-	bool found = false;
-	for (int i = 0; i < maxStudents; i++) {
-		if (groupHasThree[i] && totalCount[i] > 0) {
-			float threePercentage = (static_cast<float>(threeCount[i]) / totalCount[i]) * 100;
-			if (threePercentage > threshold) {
-				cout << "Группа " << i << ": " << threePercentage << "% троечников\n";
-				printStudentsInGroup(students, i);
-				found = true;
-			}
-		}
-	}
-	if (!found) cout << "Таких групп нет\n";
-}
 void popuskiStudent(student students[]) {
-	short ch;
-	cout << "\tВыберите пункт\n[1]Процент двоечников\n[2]Процент троечников\n";
-	cin >> ch;
+	short choice;
+	cout << "\tВыберите пункт\n[1] Процент двоечников\n[2] Процент троечников\n";
+	cin >> choice;
 
 	float threshold;
 	cout << "Введите процентный порог: ";
 	cin >> threshold;
 
-	switch (ch) {
+	switch (choice) {
 	case 1:
 		system("cls");
-		dvoechniki(students, threshold);
+		findGroupsWithThreshold(students, false, threshold);
 		break;
 	case 2:
 		system("cls");
-		troichinki(students, threshold);
+		findGroupsWithThreshold(students, true, threshold);
 		break;
 	default:
 		system("cls");
@@ -646,11 +585,11 @@ int main() {
 		cout << "[2]Внесение изменений в список." << endl;
 		cout << "[3]Отображает все данные студента." << endl;
 		cout << "[4]Показать информацию обо всех студентах в группе N." << endl;
-		cout << "[5]Отображаем самых успешных студентов со средним показателем с самым высоким рейтингом за последнюю сессию." << endl;
-		cout << "[6]Отображаем количество учеников мужского и женского пола." << endl;
+		cout << "[5]Отображение самых успешных студентов со средним показателем с самым высоким рейтингом за последнюю сессию." << endl;
+		cout << "[6]Отображая количество учеников мужского и женского пола." << endl;
 		cout << "[7]Отображение данных о студентах - хорошистов и отличников;" << endl;
 		cout << "[8]Вывести информаию о студентах по группа - зависящий от степендии" << endl;
-		cout << "[9]Проценты" << endl;
+		cout << "[9]Процент" << endl;
 		cout << "[10]Ввод студента из файла" << endl;
 		cout << "[11]Вывод данных в текстовый файл" << endl;
 		// cout << "[10]IDZ#1" << endl;
