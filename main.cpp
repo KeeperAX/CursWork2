@@ -523,6 +523,9 @@ void stependiaStudent(student students[]) {
 		}
 	}
 }
+void popuskiStudent(student students[]) {
+	short i;
+}
 int main() {
 	struct student students[maxStudents];
 	setlocale(LC_ALL, "RU");
@@ -573,8 +576,8 @@ int main() {
 		case 6: system("cls"); numManAndWoman(students); break;
 		case 7: system("cls"); grants(students); break;
 		case 8: system("cls"); numInList(students); break;
-		case 9: system("cls"); stependiaStudent; break;
-			case 10: system("cls"); break;
+		case 9: system("cls"); stependiaStudent(students); break;
+		case 10: system("cls"); popuskiStudentbreak(students); break;
 		case 11: system("cls"); addTextfile(students); break;
 		case 12: system("cls"); textFile(students); break;
 
