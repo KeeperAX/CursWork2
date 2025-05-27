@@ -400,22 +400,6 @@ void grants(student students[]) {
 	}
 
 }
-
-void numInList(student students[]) {
-	cout << "Введите номер студента в список." << endl;
-	short num; cin >> num;
-	for (short i = 0; i < room; i++)
-	{
-		if (students[i].id == num)
-		{
-			int buf = room;
-			room = i + 1;
-			data(students, i);
-			room = buf;
-		}
-	}
-}
-
 void textFile(student students[]) {
 	ofstream file("data.txt");
 	if (file.is_open()) {
@@ -472,7 +456,7 @@ void stependiaStudent(student students[]) {
 	}
 	for (short i = 0; i < room; i++) {
 		for (short j = i; j < room - i - 1; j++) {
-			if (step[j] < step[j + 1]) {
+			if (step[j] > step[j + 1]) {
 				swap(step[j], step[j + 1]);
 			}
 		}
@@ -575,11 +559,10 @@ int main() {
 		cout << "[5]Отображение самых успешных студентов со средним показателем с самым высоким рейтингом за последнюю сессию." << endl;
 		cout << "[6]Отображая количество учеников мужского и женского пола." << endl;
 		cout << "[7]Отображение данных о студентах - хорошистов и отличников;" << endl;
-		cout << "[8]Отображение данных о студентах, у которых есть номер в списке. - k" << endl;
-		cout << "[9]Вывести информаию о студентах по группа - зависящий от степендии" << endl;
-		cout << "[10]Процент троечников" << endl;
-		cout << "[11]Ввод студента из файла" << endl;
-		cout << "[12]Вывод данных в текстовый файл" << endl;
+		cout << "[8]Вывести информаию о студентах по группа - зависящий от степендии" << endl;
+		cout << "[9]Процент троечников" << endl;
+		cout << "[10]Ввод студента из файла" << endl;
+		cout << "[11]Вывод данных в текстовый файл" << endl;
 		// cout << "[10]IDZ#1" << endl;
 		int choice;
 		cin >> choice;
@@ -630,11 +613,10 @@ int main() {
 		case 5:system("cls"); topStudents(students); break;
 		case 6: system("cls"); numManAndWoman(students); break;
 		case 7: system("cls"); grants(students); break;
-		case 8: system("cls"); numInList(students); break;
-		case 9: system("cls"); stependiaStudent(students); break;
-		case 10: system("cls"); popuskiStudent(students); break;
-		case 11: system("cls"); addTextfile(students); break;
-		case 12: system("cls"); textFile(students); break;
+		case 8: system("cls"); stependiaStudent(students); break;
+		case 9: system("cls"); popuskiStudent(students); break;
+		case 10: system("cls"); addTextfile(students); break;
+		case 11: system("cls"); textFile(students); break;
 		default: system("cls"); cout << "error" << endl; break;
 		}
 	}
