@@ -1,7 +1,7 @@
 
 // 1) Вывести на экран список студентов группы, которая содержит максимальное (в пределах потока) кол-во хорошистов и отличников *
 // 2) Вывести на экран в порядке возрастания номера групп, в которых процент троечников и двоечников превышает заданное с клавиатуры значение
-// 3) Вывести перечень всех фамилий студентов потока, группированный по размеру стипендии
+// 3) Вывести перечень всех фамилий студентов потока, группированный по размеру стипендии *
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -494,7 +494,35 @@ void textFile(student students[]) {
 // 		}
 // 	}
 // }
-
+void stependiaStudent(student students[]) {
+	short step[room], stud[room];
+	for (short i = 0; i < room; i++) {
+		step[i] = students[i].spended;
+	}
+	for (short i = 0; i < room; i++) {
+		for (short j = i; j < room - i - 1; j++) {
+			if (step[j] < step[j+1]) {
+				swap(step[j], step[j+1]);
+			}
+		}
+	}
+	for (short i = 0; i < room; i++) {
+		short b = students[i].spended;
+		for (short j = 0; j = room -1; j++) {
+			if (students[i].spended == step[j]) {
+				if (b == step[j]) {
+					cout << "Степендию в размере ";
+					cout << students[i].spended << " получают студенты: " << endl;
+					b++;
+				}
+				cout << "Студент: ";
+				cout << students[i].fullName << endl;
+				// cout << "Получает стипендию: ";
+				// cout << students[i].spended << endl;
+			}
+		}
+	}
+}
 int main() {
 	struct student students[maxStudents];
 	setlocale(LC_ALL, "RU");
@@ -511,8 +539,10 @@ int main() {
 		cout << "[6]Отображая количество учеников мужского и женского пола." << endl;
 		cout << "[7]Отображение данных о студентах - хорошистов и отличников;" << endl;
 		cout << "[8]Отображение данных о студентах, у которых есть номер в списке. - k" << endl;
-		cout << "[9]Ввод студента из файла" << endl;
-		cout << "[10]Вывод данных в текстовый файл" << endl;
+		cout << "[9]Вывести информаию о студентах по группа - зависящий от степендии" << endl;
+		cout << "[10]Процент троечников" << endl;
+		cout << "[11]Ввод студента из файла" << endl;
+		cout << "[12]Вывод данных в текстовый файл" << endl;
 		// cout << "[10]IDZ#1" << endl;
 		int choice;
 		cin >> choice;
@@ -543,8 +573,10 @@ int main() {
 		case 6: system("cls"); numManAndWoman(students); break;
 		case 7: system("cls"); grants(students); break;
 		case 8: system("cls"); numInList(students); break;
-		case 9: system("cls"); addTextfile(students); break;
-		case 10: system("cls"); textFile(students); break;
+		case 9: system("cls"); stependiaStudent; break;
+			case 10: system("cls"); break;
+		case 11: system("cls"); addTextfile(students); break;
+		case 12: system("cls"); textFile(students); break;
 
 		//case 10: system("cls"); dormitory(students); break;
 		default: system("cls"); cout << "error" << endl; break;
