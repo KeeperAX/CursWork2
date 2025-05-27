@@ -65,11 +65,11 @@ void createStudents(student students[], int &ch) {
             cout << "\nВвести еще студент? [1-Да, 2-Нет]\n";
             int choice;
             cin >> choice;
-            if (choice == 1) {
+            if (choice == 2) {
                 exit = true;
                 system("cls");
             }
-            else if (choice == 2) {
+            else if (choice == 1) {
                 exit = false;
                 system("cls");
             }
