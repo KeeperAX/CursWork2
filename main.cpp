@@ -13,11 +13,7 @@ const int maxStudents = 30; //Кол-во студентов, что можно 
 
 using namespace std;
 
-struct addInfoStudents
-{
-	string nonresident;
-	int finance;
-};
+
 
 struct grades
 {
@@ -32,7 +28,6 @@ struct student
 	int group;
 	int id;
 	grades studGrades;
-	addInfoStudents addInfo;
 	int spended;
 };
 
@@ -470,50 +465,26 @@ void textFile(student students[]) {
 	}
 }
 
-// void dormitory(student students[]) {
-// 	cout << "\tВведите дополнительную информацию о студенте" << endl;
-// 	cout << "Студент - иностранный студент? [Да/Нет]" << endl;
-// 	cout << "Семейный доход." << endl;
-// 	for (short i = 0; i < room; i++) {
-// 		cout << "Студент " << i + 1 << endl;
-// 		cin >> students[i].addInfo.nonresident;
-// 		cin >> students[i].addInfo.finance;
-// 	}
-// 	short income = 10000; //Мин. доход
-// 	for (short i = 0; i < room; i++)
-// 	{
-// 		if ((students[i].addInfo.nonresident == "Да" || students[i].addInfo.nonresident == "да") && students[i].addInfo.finance <= income)
-// 		{
-// 			int buf = room;
-// 			room = i + 1;
-// 			students[i].addInfo.nonresident;
-// 			students[i].addInfo.finance;
-// 			cout << endl;
-// 			data(students, i);
-// 			room = buf;
-// 		}
-// 	}
-// }
 void stependiaStudent(student students[]) {
-	short step[room], stud[room];
+	short step[maxStudents], stud[maxStudents];
 	for (short i = 0; i < room; i++) {
 		step[i] = students[i].spended;
 	}
 	for (short i = 0; i < room; i++) {
 		for (short j = i; j < room - i - 1; j++) {
-			if (step[j] < step[j+1]) {
-				swap(step[j], step[j+1]);
+			if (step[j] < step[j + 1]) {
+				swap(step[j], step[j + 1]);
 			}
 		}
 	}
 	for (short i = 0; i < room; i++) {
 		short b = students[i].spended;
-		for (short j = 0; j = room -1; j++) {
-			if (students[i].spended == step[j]) {
-				if (b == step[j]) {
-					cout << "Степендию в размере ";
-					cout << students[i].spended << " получают студенты: " << endl;
-					b++;
+		bool repeat = false;
+		for (short j = 0; j < room; j++) {
+			if (b == step[j]) {
+				if (!repeat) {
+					cout << "Степендию в размере " << b << " получают студенты: " << endl;
+					repeat = true;
 				}
 				cout << "Студент: ";
 				cout << students[i].fullName << endl;
@@ -523,8 +494,71 @@ void stependiaStudent(student students[]) {
 		}
 	}
 }
+
+
+void dvoechniki(student students[], float threshold) {
+    int failCount[maxStudents];
+    int totalCount[maxStudents];
+
+    for (int i = 0; i < room; i++) {
+        totalCount[students[i].group]++;
+        for (int j = 0; j < 5; j++) {
+            if (students[i].studGrades.test[j] == 2) {
+                failCount[students[i].group]++;
+                break; // Если нашли двоечника, выходим из цикла
+            }
+        }
+    }
+
+    cout << "Группы с процентом двоечников выше " << threshold << "%:\n";
+    for (int i = 0; i < maxStudents; i++) {
+        if (totalCount[i] > 0) {
+            float failPercentage = (static_cast<float>(failCount[i]) / totalCount[i]) * 100;
+            if (failPercentage > threshold) {
+                cout << "Группа " << i << ": " << failPercentage << "% двоечников\n";
+            }
+        }
+    }
+}
+
+void troichinki(student students[], float threshold) {
+    int threeCount[maxStudents];
+    int totalCount[maxStudents];
+
+    for (int i = 0; i < room; i++) {
+        totalCount[students[i].group]++;
+        for (int j = 0; j < 5; j++) {
+            if (students[i].studGrades.test[j] == 3) {
+                threeCount[students[i].group]++;
+                break; // Если нашли троечника, выходим из цикла
+            }
+        }
+    }
+
+    cout << "Группы с процентом троечников выше " << threshold << "%:\n";
+    for (int i = 0; i < maxStudents; i++) {
+        if (totalCount[i] > 0) {
+            float threePercentage = (static_cast<float>(threeCount[i]) / totalCount[i]) * 100;
+            if (threePercentage > threshold) {
+                cout << "Группа " << i << ": " << threePercentage << "% троечников\n";
+            }
+        }
+    }
+}
+
 void popuskiStudent(student students[]) {
-	short i;
+    short ch;
+    cout << "\tВыберите пункт\n[1]Процент двоечников\n" << "[2]Процент троечников" << endl;
+    cin >> ch;
+    float threshold;
+    cout << "Введите процент: ";
+    cin >> threshold;
+
+    switch (ch) {
+        case 1: system("cls"); dvoechniki(students, threshold); break;
+        case 2: system("cls"); troichinki(students, threshold); break;
+        default: system("cls"); cout << "error"; system("pause"); return; break;
+    }
 }
 int main() {
 	struct student students[maxStudents];
@@ -551,25 +585,46 @@ int main() {
 		cin >> choice;
 		switch (choice)
 		{
-		case 1:system("cls");  createStudents(students, choice); break;
-		case 2:
-			system("cls");
-			cout << "Какой номер студента вы хотите изменить?" << endl;
-			int num;
-			cin >> num;
-			num--;
-			system("cls");
-			if (num >= 0 && num < maxStudents)
-			{
-				int buf = room;
-				room = num;
-				createStudents(students, choice);
-				room = buf;
-			}
-			else {
-				cout << "error" << endl;
-			}
-			break;
+			case 1:system("cls");  createStudents(students, choice); break;
+			case 2:
+				system("cls");
+				cout << "Какой номер студента вы хотите изменить или удалить?" << endl;
+				int num;
+				cin >> num;
+				num--;
+				system("cls");
+				if (num >= 0 && num < room)
+				{
+					cout << "Выберите действие: " << endl;
+					cout << "1. Изменить студента" << endl;
+					cout << "2. Удалить студента" << endl;
+					int action;
+					cin >> action;
+					if (action == 1)
+					{
+						int buf = room;
+						room = num;
+						createStudents(students, choice);
+						room = buf;
+					}
+					else if (action == 2) {
+						cout << "Вы уверены, что хотите удалить студента " << students[num].fullName << "? [1-Да, 2-Нет]" << endl;
+						int confirm;
+						cin >> confirm;
+						if (confirm == 1) {
+							for (short j = num; j < room - 1; j++) {
+								students[j] = students[j + 1];
+							}
+							room--;
+							cout << "Студент " << students[num].fullName << " удален." << endl;
+						}
+						else {
+							cout << "Удаление отменено." << endl;
+						}
+					}
+					break;
+				}
+
 		case 3: system("cls"); data(students, 0); break;
 		case 4: system("cls"); sortGroup(students); break;
 		case 5:system("cls"); topStudents(students); break;
@@ -577,11 +632,9 @@ int main() {
 		case 7: system("cls"); grants(students); break;
 		case 8: system("cls"); numInList(students); break;
 		case 9: system("cls"); stependiaStudent(students); break;
-		case 10: system("cls"); popuskiStudentbreak(students); break;
+		case 10: system("cls"); popuskiStudent(students); break;
 		case 11: system("cls"); addTextfile(students); break;
 		case 12: system("cls"); textFile(students); break;
-
-		//case 10: system("cls"); dormitory(students); break;
 		default: system("cls"); cout << "error" << endl; break;
 		}
 	}
